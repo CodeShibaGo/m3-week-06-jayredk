@@ -101,7 +101,87 @@ ERROR [flask_migrate] Error: 'cryptography' package is required for sha256_passw
 
 ## Q: Flask-Migrate 如何使用？ #124
 
+### Step 1: 安裝 Flask-Migrate
+```bash
+pip install Flask-Migrate
+```
+
+### Step 2: 在 flask 中使用 Flask-Migrate
+> Note: 請先建立好 Model 以及連線資料庫的設定
+
+```python
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
+
+app = Flask(__name__)
+db = SQLAlchemy(app)
+migrate = Migrate(app, db)
+```
+
+### Step 3: 創建 migration repository
+```bash
+flask db init
+```
+
+### Step 4: 建立 migration 版本
+```bash
+flask db migrate -m "輸入版本訊息"
+```
+
+### Step 5: 套用最新的 migration 版本
+```bash
+flask db upgrade
+```
+
+
+### 常用指令
+- `flask db init`: 創建 migration repository
+- `flask db migrate -m <message>`: 建立新的 migration 版本
+- `flask db history`: 查看所有 migration 版本
+- `flask db current`: 查看目前 migration 版本
+- `flask db upgrade`: 升級至最新版本
+- `flask db upgrade <revision>`: 升級至特定版本
+- `flask db downgrade <revision>`: 退回特定版本
+- `flask db –help`: 查詢相關指令
+
+
+> 後記: 其實概念跟 git 差不多
+
 ## Q: 如何使用 SQLAlchemy 下 Raw SQL？ #125
+> Note: 這裡假設 SQLAlchemy 已經連接資料庫並設定完畢
+
+那麼你會有
+```python
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+
+app = Flask(__name__)
+db = SQLAlchemy(app)
+```
+
+準備好就開始了
+
+### Step 1: 從 sqlalchemy 匯入 text
+```python
+#...
+
+from sqlalchemy import text
+```
+
+### Step 2: 使用 Raw SQL 進行 Query
+```python
+def get_user():
+    query = text('SELECT * FROM User') # 這裡可以代入需要的 Raw SQL 語句
+    res = db.session.execute(query).fetchall()  # 會 return CursorResult object，要用 fetchall 轉換所有資料
+
+    for item in res:
+        print(item)  # 印出每個 row
+```
+Reference:
+- [basic-usage - sqlalchemy docs](https://docs.sqlalchemy.org/en/20/core/connections.html#basic-usage)
+- [Query the data - Flask-SQLAlchemy docs](https://flask-sqlalchemy.palletsprojects.com/en/3.1.x/quickstart/#query-the-data)
+- ChatGPT（問了大概 3 次才正確）
 
 ## Q: 如何用土炮的方式建立 Table？ #126
 
