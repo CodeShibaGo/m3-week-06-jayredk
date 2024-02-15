@@ -184,5 +184,34 @@ Reference:
 - ChatGPT（問了大概 3 次才正確）
 
 ## Q: 如何用土炮的方式建立 Table？ #126
+直接接續上一個問題，只要將 Raw SQL 的語句改成創建 table 即可
+
+創建 table 的語句可參考：
+```
+CREATE TABLE IF NOT EXISTS your_table_name (
+    id INT NOT NULL,
+    PRIMARY KEY (id)
+    name VARCHAR(255) NOT NULL
+    #... 填入各個欄位名稱，並宣告類別
+)
+```
+[MySQL - create table](https://www.w3schools.com/mysql/mysql_create_table.asp)
+
+資料類別可以參考[連結](https://www.w3schools.com/sql/sql_datatypes.asp)
+
+```python
+from sqlalchemy import text
+
+create_table_query = text('''
+    CREATE TABLE IF NOT EXISTS members (
+        id INT NOT NULL,
+        name VARCHAR(255) NOT NULL,
+        age INT
+        PRIMARY KEY (id)
+    )
+    ''')  # Step 1  輸入 create table 的語句
+db.session.execute(create_table_query)  # Step 2  在 session 執行語句
+db.session.commit()  # Step 3 在 session 修改完，commit 後資料庫就會更新
+```
 
 ## Q: 什麼是密碼雜湊？如何使用 Python 實現？ #129
